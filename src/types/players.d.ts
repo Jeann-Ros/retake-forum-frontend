@@ -9,8 +9,8 @@ export type CsApiTeamRank = {
   id: number;
   name: string;
   rank: number;
-  rank_diff: number;
   points: number;
+  points_diff: number;
 };
 
 export type PlayerListItem = {
@@ -25,5 +25,5 @@ export type WorldRankingListItem = {
   rank: number;
   name: string;
   points: number;
-  rankDiff: number;
+  pointsDiff: number;
 };

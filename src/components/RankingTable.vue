@@ -20,7 +20,6 @@
           <th class="rank-column">#</th>
           <th>Time</th>
           <th class="detail-column">Score</th>
-          <th class="detail-column">Variacao</th>
         </tr>
 
         <tr v-else>
@@ -35,15 +34,11 @@
           <template v-if="type === 'teams'">
             <td class="rank-position">{{ row.rank }}</td>
             <td class="rank-name">{{ row.name }}</td>
-            <td class="detail-column rank-detail">{{ row.points }}</td>
-            <td
-              :class="[
-                'detail-column',
-                'rank-detail',
-                variationClass(row.rankDiff),
-              ]"
-            >
-              {{ formatVariation(row.rankDiff) }}
+            <td class="detail-column rank-detail score-cell">
+              <span class="score-total">{{ row.points }}</span>
+              <span :class="['score-diff', variationClass(row.pointsDiff)]">
+                {{ formatPointVariation(row.pointsDiff) }}
+              </span>
             </td>
           </template>
 
@@ -93,9 +88,9 @@ export default {
       if (typeof value !== "number") return "-";
       return value.toFixed(2);
     },
-    formatVariation(value) {
+    formatPointVariation(value) {
       if (typeof value !== "number") return "-";
-      return value > 0 ? `+${value}` : String(value);
+      return value >= 0 ? `+${value}` : String(value);
     },
     variationClass(value) {
       if (value > 0) return "positive";
@@ -201,5 +196,33 @@ export default {
 
 .rank-detail.negative {
   color: #b91c1c;
+}
+
+.score-diff.positive {
+  color: #047857;
+}
+
+.score-diff.negative {
+  color: #b91c1c;
+}
+
+.score-cell {
+  line-height: 1.15;
+}
+
+.score-total,
+.score-diff {
+  display: block;
+}
+
+.score-total {
+  color: #111827;
+  font-weight: 700;
+}
+
+.score-diff {
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: 3px;
 }
 </style>

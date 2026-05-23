@@ -21,7 +21,7 @@ function formatTeamRank(team: CsApiTeamRank): WorldRankingListItem {
     rank: team.rank,
     name: team.name || "Time sem nome",
     points: team.points,
-    rankDiff: team.rank_diff,
+    pointsDiff: team.points_diff,
   };
 }
 
