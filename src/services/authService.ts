@@ -29,7 +29,10 @@ const authService = {
   },
 
   async register(userData: RegisterPayload): Promise<Usuario> {
-    const response = await axiosInstance.post<Usuario>("/usuarios/register", userData);
+    const response = await axiosInstance.post<Usuario>(
+      "/usuarios/createUsuario",
+      userData,
+    );
     return response.data;
   },
 
