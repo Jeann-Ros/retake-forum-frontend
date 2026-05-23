@@ -16,30 +16,46 @@
 
     <table v-else class="ranking-table">
       <thead>
-        <tr v-if="type === 'matches'">
-          <th>Nome</th>
-          <th class="detail-column">Data</th>
-          <th class="detail-column">Pais</th>
+        <tr v-if="type === 'teams'">
+          <th class="rank-column">#</th>
+          <th>Time</th>
+          <th class="detail-column">Score</th>
+          <th class="detail-column">Variacao</th>
         </tr>
 
         <tr v-else>
+          <th class="rank-column">#</th>
           <th>Jogador</th>
+          <th class="detail-column">Rating</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="row in rows" :key="row.id || row.name">
-          <template v-if="type === 'matches'">
+          <template v-if="type === 'teams'">
+            <td class="rank-position">{{ row.rank }}</td>
             <td class="rank-name">{{ row.name }}</td>
-            <td class="detail-column rank-detail">
-              {{ formatDate(row.scheduled_at) }}
+            <td class="detail-column rank-detail">{{ row.points }}</td>
+            <td
+              :class="[
+                'detail-column',
+                'rank-detail',
+                variationClass(row.rankDiff),
+              ]"
+            >
+              {{ formatVariation(row.rankDiff) }}
             </td>
-            <td class="detail-column rank-detail">{{ row.country || "-" }}</td>
           </template>
 
-          <td v-else class="rank-name uppercase">
-            {{ row.name }}
-          </td>
+          <template v-else>
+            <td class="rank-position">{{ row.rank }}</td>
+            <td class="rank-name uppercase">
+              {{ row.name }}
+            </td>
+            <td class="detail-column rank-detail">
+              {{ formatRating(row.rating) }}
+            </td>
+          </template>
         </tr>
       </tbody>
     </table>
@@ -57,7 +73,7 @@ export default {
     type: {
       type: String,
       required: true,
-      validator: (value) => ["players", "matches"].includes(value),
+      validator: (value) => ["players", "teams"].includes(value),
     },
     rows: {
       type: Array,
@@ -73,16 +89,18 @@ export default {
     },
   },
   methods: {
-    formatDate(value) {
-      if (!value) return "-";
-
-      return new Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }).format(new Date(value));
+    formatRating(value) {
+      if (typeof value !== "number") return "-";
+      return value.toFixed(2);
+    },
+    formatVariation(value) {
+      if (typeof value !== "number") return "-";
+      return value > 0 ? `+${value}` : String(value);
+    },
+    variationClass(value) {
+      if (value > 0) return "positive";
+      if (value < 0) return "negative";
+      return "";
     },
   },
 };
@@ -161,8 +179,27 @@ export default {
   font-weight: 600;
 }
 
+.rank-position {
+  color: #6b7280;
+  font-weight: 700;
+  white-space: nowrap;
+  width: 1%;
+}
+
 .detail-column {
   text-align: right;
   white-space: nowrap;
+}
+
+.rank-column {
+  width: 1%;
+}
+
+.rank-detail.positive {
+  color: #047857;
+}
+
+.rank-detail.negative {
+  color: #b91c1c;
 }
 </style>

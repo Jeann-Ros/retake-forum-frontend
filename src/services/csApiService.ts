@@ -1,67 +1,49 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 import type {
-  PandaScorePlayer,
-  PandaScoreUpcomingMatch,
+  CsApiPlayerStats,
+  CsApiTeamRank,
   PlayerListItem,
-  UpcomingTournamentListItem,
+  WorldRankingListItem,
 } from "../types/players";
 
-const csApiClient = axios.create({
-  baseURL: "https://api.pandascore.co",
-  timeout: 10000,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.VUE_APP_PANDASCORE_TOKEN || ""}`,
-  },
-});
-
-function formatPlayer(player: PandaScorePlayer, index: number): PlayerListItem {
+function formatPlayer(player: CsApiPlayerStats): PlayerListItem {
   return {
     id: player.id,
-    rank: index + 1,
-    name: player.name || player.first_name || player.slug || "Jogador sem nome",
+    rank: player.rank,
+    name: player.name || "Jogador sem nome",
+    rating: player.rating,
   };
 }
 
-function formatMatch(match: PandaScoreUpcomingMatch): UpcomingTournamentListItem {
+function formatTeamRank(team: CsApiTeamRank): WorldRankingListItem {
   return {
-    id: match.id,
-    name:
-      match.tournament?.name ||
-      match.serie?.full_name ||
-      match.league?.name ||
-      match.name ||
-      "Torneio sem nome",
-    scheduled_at: match.scheduled_at || match.begin_at,
-    country: match.tournament?.country || match.tournament?.region || "-",
+    id: team.id,
+    rank: team.rank,
+    name: team.name || "Time sem nome",
+    points: team.points,
+    rankDiff: team.rank_diff,
   };
 }
 
 const csApiService = {
   async getTopPlayers(limit = 10): Promise<PlayerListItem[]> {
-    const response = await csApiClient.get<PandaScorePlayer[]>("/csgo/players", {
+    const response = await axiosInstance.get<CsApiPlayerStats[]>("/cs/players", {
       params: {
-        "page[number]": 1,
-        "page[size]": limit,
+        limit,
       },
     });
 
     return response.data.map(formatPlayer);
   },
 
-  async getUpcomingMatches(limit = 1): Promise<UpcomingTournamentListItem[]> {
-    const response = await csApiClient.get<PandaScoreUpcomingMatch[]>(
-      "/csgo/matches/upcoming",
-      {
-        params: {
-          "filter[videogame_title]": "cs-2",
-          "page[size]": limit,
-        },
+  async getWorldRankings(limit = 10): Promise<WorldRankingListItem[]> {
+    const response = await axiosInstance.get<CsApiTeamRank[]>("/cs/rankings", {
+      params: {
+        limit,
       },
-    );
+    });
 
-    return response.data.map(formatMatch);
+    return response.data.map(formatTeamRank);
   },
 };
 

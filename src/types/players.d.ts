@@ -1,42 +1,29 @@
-export type PandaScoreTeam = {
-  name?: string | null;
+export type CsApiPlayerStats = {
+  id: number;
+  name: string;
+  rank: number;
+  rating: number;
 };
 
-export type PandaScorePlayer = {
+export type CsApiTeamRank = {
   id: number;
-  name?: string | null;
-  first_name?: string | null;
-  slug?: string | null;
-  current_team?: PandaScoreTeam | null;
-};
-
-export type PandaScoreUpcomingMatch = {
-  id: number;
-  name?: string | null;
-  scheduled_at?: string | null;
-  begin_at?: string | null;
-  tournament?: {
-    name?: string | null;
-    country?: string | null;
-    region?: string | null;
-  } | null;
-  serie?: {
-    full_name?: string | null;
-  } | null;
-  league?: {
-    name?: string | null;
-  } | null;
+  name: string;
+  rank: number;
+  rank_diff: number;
+  points: number;
 };
 
 export type PlayerListItem = {
   id: number;
   rank: number;
   name: string;
+  rating: number;
 };
 
-export type UpcomingTournamentListItem = {
+export type WorldRankingListItem = {
   id: number;
+  rank: number;
   name: string;
-  scheduled_at?: string | null;
-  country: string;
+  points: number;
+  rankDiff: number;
 };

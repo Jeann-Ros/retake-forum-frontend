@@ -33,7 +33,7 @@
         <div class="home-main-grid">
           <div class="rankings-column">
             <RankingTable
-              title="Jogadores CS2"
+              title="Top jogadores"
               type="players"
               :rows="playerRankings"
               :loading="playerRankingsLoading"
@@ -89,11 +89,11 @@
 
           <div class="rankings-column">
             <RankingTable
-              title="Proximo Torneio CS2"
-              type="matches"
-              :rows="upcomingMatches"
-              :loading="upcomingMatchesLoading"
-              :error="upcomingMatchesError"
+              title="Ranking mundial"
+              type="teams"
+              :rows="worldRankings"
+              :loading="worldRankingsLoading"
+              :error="worldRankingsError"
             />
           </div>
         </div>
@@ -126,12 +126,12 @@ export default {
       noticias: [],
       posts: [],
       playerRankings: [],
-      upcomingMatches: [],
+      worldRankings: [],
       loading: true,
       playerRankingsLoading: true,
       playerRankingsError: false,
-      upcomingMatchesLoading: true,
-      upcomingMatchesError: false,
+      worldRankingsLoading: true,
+      worldRankingsError: false,
       userName: "Usuário",
       userRole: "USER",
     };
@@ -193,19 +193,19 @@ export default {
       }
     },
     loadRankings() {
-      this.loadUpcomingMatches();
+      this.loadWorldRankings();
       this.loadPlayerRankings();
     },
-    async loadUpcomingMatches() {
+    async loadWorldRankings() {
       try {
-        this.upcomingMatchesLoading = true;
-        this.upcomingMatchesError = false;
-        this.upcomingMatches = await csApiService.getUpcomingMatches(1);
+        this.worldRankingsLoading = true;
+        this.worldRankingsError = false;
+        this.worldRankings = await csApiService.getWorldRankings(10);
       } catch (error) {
-        this.upcomingMatchesError = true;
-        console.error("Erro ao carregar torneios externos:", error);
+        this.worldRankingsError = true;
+        console.error("Erro ao carregar ranking mundial externo:", error);
       } finally {
-        this.upcomingMatchesLoading = false;
+        this.worldRankingsLoading = false;
       }
     },
     async loadPlayerRankings() {
