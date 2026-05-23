@@ -1,0 +1,35 @@
+.message,
+.error-message,
+.success-message,
+.loading-message,
+.empty-message,
+.loading {
+  font-size: 14px;
+}
+
+.message,
+.error-message,
+.success-message {
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.success-message {
+  background-color: #dcfce7;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+
+.loading,
+.loading-message,
+.empty-message {
+  text-align: center;
+  color: #6b7280;
+  padding: 32px 16px;
+}
