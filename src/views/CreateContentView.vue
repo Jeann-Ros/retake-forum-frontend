@@ -275,6 +275,12 @@ const setTextAlign = (alignment) => {
 };
 
 const openLinkModal = () => {
+  if (editor.value?.isActive("link")) {
+    editor.value.chain().focus().unsetLink().run();
+
+    return;
+  }
+
   modalType.value = "link";
   isModalOpen.value = true;
 };
