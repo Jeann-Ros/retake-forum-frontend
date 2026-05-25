@@ -16,9 +16,6 @@
             Sair
           </button>
         </div>
-        <button v-else @click="goToLogin" class="btn-login">
-          Entrar / Registar
-        </button>
       </div>
     </div>
   </header>

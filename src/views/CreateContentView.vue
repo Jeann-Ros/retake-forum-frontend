@@ -49,20 +49,62 @@
             <label class="form-label">Conteúdo</label>
 
             <div class="editor-toolbar">
-              <button type="button" class="toolbar-btn" @click="toggleBold">
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.bold }]"
+                :aria-pressed="activeToolbar.bold"
+                @click="toggleBold"
+              >
                 Negrito
               </button>
 
-              <button type="button" class="toolbar-btn" @click="toggleItalic">
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.italic }]"
+                :aria-pressed="activeToolbar.italic"
+                @click="toggleItalic"
+              >
                 Itálico
               </button>
 
-              <button type="button" class="toolbar-btn" @click="openLinkModal">
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.link }]"
+                :aria-pressed="activeToolbar.link"
+                @click="openLinkModal"
+              >
                 Link
               </button>
 
               <button type="button" class="toolbar-btn" @click="openImageModal">
                 Imagem
+              </button>
+
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.alignLeft }]"
+                :aria-pressed="activeToolbar.alignLeft"
+                @click="setTextAlign('left')"
+              >
+                Esquerda
+              </button>
+
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.alignCenter }]"
+                :aria-pressed="activeToolbar.alignCenter"
+                @click="setTextAlign('center')"
+              >
+                Centro
+              </button>
+
+              <button
+                type="button"
+                :class="['toolbar-btn', { active: activeToolbar.alignRight }]"
+                :aria-pressed="activeToolbar.alignRight"
+                @click="setTextAlign('right')"
+              >
+                Direita
               </button>
             </div>
 
@@ -106,6 +148,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import TextAlign from "@tiptap/extension-text-align";
 
 import AppHeader from "../components/AppHeader.vue";
 import BackButton from "../components/BackButton.vue";
@@ -136,6 +179,30 @@ const loading = ref(false);
 
 const isModalOpen = ref(false);
 const modalType = ref("link");
+const activeToolbar = ref({
+  bold: false,
+  italic: false,
+  link: false,
+  alignLeft: true,
+  alignCenter: false,
+  alignRight: false,
+});
+
+const updateToolbarState = ({ editor: currentEditor }) => {
+  const alignCenter = currentEditor.isActive({ textAlign: "center" });
+  const alignRight = currentEditor.isActive({ textAlign: "right" });
+
+  activeToolbar.value = {
+    bold: currentEditor.isActive("bold"),
+    italic: currentEditor.isActive("italic"),
+    link: currentEditor.isActive("link"),
+    alignLeft:
+      currentEditor.isActive({ textAlign: "left" }) ||
+      (!alignCenter && !alignRight),
+    alignCenter,
+    alignRight,
+  };
+};
 
 const editor = useEditor({
   extensions: [
@@ -146,6 +213,12 @@ const editor = useEditor({
     }),
 
     Image,
+
+    TextAlign.configure({
+      types: ["heading", "paragraph"],
+      alignments: ["left", "center", "right"],
+      defaultAlignment: "left",
+    }),
 
     Placeholder.configure({
       placeholder: "Escreva seu texto aqui...",
@@ -159,6 +232,10 @@ const editor = useEditor({
       class: "editor-content-inner",
     },
   },
+
+  onCreate: updateToolbarState,
+  onSelectionUpdate: updateToolbarState,
+  onTransaction: updateToolbarState,
 });
 
 const isNoticia = computed(() => tipo.value === "noticia");
@@ -191,6 +268,10 @@ const toggleBold = () => {
 
 const toggleItalic = () => {
   editor.value?.chain().focus().toggleItalic().run();
+};
+
+const setTextAlign = (alignment) => {
+  editor.value?.chain().focus().setTextAlign(alignment).run();
 };
 
 const openLinkModal = () => {
@@ -382,6 +463,13 @@ onBeforeUnmount(() => {
 .toolbar-btn:hover {
   border-color: #2563eb;
   color: #2563eb;
+}
+
+.toolbar-btn.active {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px #2563eb;
 }
 
 .editor-content {
